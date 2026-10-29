@@ -1,0 +1,10 @@
+const express = require('express');
+const rateLimit = require('express-rate-limit');
+const controller = require('../controllers/auth.controller');
+const authenticate = require('../middlewares/authenticate');
+const router = express.Router();
+const loginLimit = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false, handler: (req, res) => res.status(429).json({ code: 'LOGIN_RATE_LIMITED', message: 'Demasiados intentos. Intenta más tarde.', requestId: req.requestId }) });
+router.post('/sessions', loginLimit, controller.createSession);
+router.delete('/sessions/current', authenticate, controller.deleteSession);
+router.post('/development-users', controller.createDevelopmentUser);
+module.exports = router;
