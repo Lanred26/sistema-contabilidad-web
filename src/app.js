@@ -1,0 +1,21 @@
+require('dotenv').config();
+const express = require('express');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
+const requestId = require('./middlewares/request-id');
+const errorHandler = require('./middlewares/error-handler');
+const authRoutes = require('./routes/auth.routes');
+const companyRoutes = require('./routes/companies.routes');
+
+const app = express();
+app.disable('x-powered-by');
+app.use(helmet());
+app.use(requestId);
+app.use(express.json({ limit: '32kb' }));
+app.use(cookieParser());
+app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/companies/:companyId', companyRoutes);
+app.use((req, res) => res.status(404).json({ code: 'NOT_FOUND', message: 'No se encontró la ruta.', requestId: req.requestId }));
+app.use(errorHandler);
+module.exports = app;

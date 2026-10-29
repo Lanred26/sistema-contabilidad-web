@@ -1,0 +1,16 @@
+const express = require('express');
+const accounts = require('../controllers/accounts.controller');
+const journals = require('../controllers/journals.controller');
+const authenticate = require('../middlewares/authenticate');
+const companyAccess = require('../middlewares/company-access');
+const authorize = require('../middlewares/authorize');
+const { uuid } = require('../validators/schemas');
+const { AppError } = require('../utils/errors');
+const router = express.Router({ mergeParams: true });
+router.use(authenticate, (req, _res, next) => { try { uuid.parse(req.params.companyId); next(); } catch { next(new AppError(404, 'COMPANY_NOT_FOUND', 'No se encontró la empresa.')); } }, companyAccess);
+router.get('/accounts', accounts.list);
+router.post('/accounts', authorize('ADMIN', 'ACCOUNTANT'), accounts.create);
+router.patch('/accounts/:accountId', authorize('ADMIN', 'ACCOUNTANT'), accounts.update);
+router.post('/journal-entries', authorize('ADMIN', 'ACCOUNTANT'), journals.create);
+router.get('/accounts/:accountId/ledger', journals.ledger);
+module.exports = router;
