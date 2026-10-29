@@ -1,0 +1,33 @@
+# Dependencias
+node_modules/
+
+# Configuración local y secretos
+.env
+.env.*
+!.env.example
+!.env.test.example
+*.pem
+*.key
+
+# Logs, cobertura y compilados
+logs/
+*.log
+coverage/
+dist/
+build/
+
+# Datos locales y respaldos
+*.sqlite
+*.sqlite3
+*.sql.gz
+*.bak
+contapack_data.txt
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Archivos temporales de revisión local
+.codex-qa/
