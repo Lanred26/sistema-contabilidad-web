@@ -4,7 +4,7 @@
 
 Cada persona usa su propia cuenta de GitHub para que los commits y revisiones identifiquen a su autor. No compartan contraseñas ni usen la cuenta de un solo integrante para trabajar todos.
 
-1. Clonen el repositorio público: `git clone https://github.com/USUARIO/sistema-contabilidad-web.git`.
+1. Clonen el repositorio público: `git clone https://github.com/Lanred26/sistema-contabilidad-web.git`.
 2. Entren a `develop` y actualicen: `git switch develop` y `git pull origin develop`.
 3. Creen una rama por issue: `git switch -c feature/S2-01-catalogo-cuentas`.
 4. Hagan cambios pequeños, ejecuten las pruebas y registren commits con prefijos claros, por ejemplo `feat: add account catalog endpoint` o `test: cover unbalanced journal rejection`.
@@ -35,4 +35,4 @@ Al ser público, cualquiera puede ver y clonar el código. Para que los otros do
 - Revisión de otro integrante y resolución de comentarios.
 - PR de entrega del sprint desde `develop` hacia `main` para que el profesor lo inspeccione.
 
-La estructura local no contiene todavía una URL de GitHub. Sustituyan `USUARIO` por el dueño real y registren la URL en el README después de crear el remoto.
+La URL pública del repositorio es `https://github.com/Lanred26/sistema-contabilidad-web`.

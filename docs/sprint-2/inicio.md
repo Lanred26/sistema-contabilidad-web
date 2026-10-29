@@ -19,13 +19,13 @@ Las rutas conectan middlewares con controladores; los controladores validan y tr
 
 ## Preparar el entorno
 
-Requisitos: Node.js 20 o posterior, npm y Docker Desktop iniciado.
+Requisitos: Node.js 24 o posterior, npm y Docker Desktop iniciado.
 
 ```powershell
 Copy-Item .env.example .env
 # Edita .env y establece una contraseña local para DB_PASSWORD.
 docker compose up -d
-npm install
+npm ci
 npm run db:migrate
 npm run dev
 ```
@@ -71,7 +71,7 @@ Remove-Item Env:TEST_DB_NAME
 $env:DB_NAME = 'contabilidad'
 ```
 
-Las pruebas verifican sesión, acceso anónimo, cierre de sesión, alta y duplicidad de cuentas, aislamiento entre empresas, atomicidad de pólizas balanceadas y rechazo de pólizas descuadradas, y consulta del mayor. Requieren MySQL disponible y dependencias instaladas.
+Las pruebas usan Vitest, como en los ejemplos de clase. Verifican sesión, acceso anónimo, cierre de sesión, alta y duplicidad de cuentas, aislamiento entre empresas, atomicidad de pólizas balanceadas y rechazo de pólizas descuadradas, y consulta del mayor. Requieren MySQL disponible y dependencias instaladas.
 
 ## Criterio de terminado y pendientes
 
@@ -84,4 +84,4 @@ Las pruebas verifican sesión, acceso anónimo, cierre de sesión, alta y duplic
 - [ ] Registrar nombres y responsables reales de los tres integrantes, tareas e issues.
 - [ ] Completar el mayor con saldo inicial/acumulado y avanzar UI en siguientes sprints.
 
-El historial Git local sirve para preparar los cambios. La URL del remoto, issues y revisiones reales sólo se pueden registrar cuando el repositorio compartido de GitHub exista.
+El código sigue la práctica de clase con Express, `mysql2/promise`, consultas preparadas, validaciones con `express-validator`, pruebas con Vitest y un archivo de conexión separado. Los nombres de las guías se mantienen descriptivos para que el equipo encuentre rápido las instrucciones.

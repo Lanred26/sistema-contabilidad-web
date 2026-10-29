@@ -1,13 +1,12 @@
 const crypto = require('node:crypto');
-const bcrypt = require('bcryptjs');
 const repo = require('../repositories/auth.repository');
 const { AppError } = require('../utils/errors');
-const DUMMY_HASH = bcrypt.hashSync('constant-time-comparison-only', 12);
+const { verifyPassword, DUMMY_HASH } = require('../utils/contrasenas');
 
 const digest = (token) => crypto.createHash('sha256').update(token).digest('hex');
 async function login(email, password) {
   const user = await repo.findUserByEmail(email.trim().toLowerCase());
-  const passwordValid = await bcrypt.compare(password, user?.password_hash || DUMMY_HASH);
+  const passwordValid = await verifyPassword(password, user?.password_hash || `${Buffer.alloc(16).toString('hex')}:${DUMMY_HASH}`);
   const valid = Boolean(user && user.active && passwordValid);
   if (!valid) throw new AppError(401, 'INVALID_CREDENTIALS', 'Correo o contraseña no válidos.');
   const token = crypto.randomBytes(32).toString('base64url');
