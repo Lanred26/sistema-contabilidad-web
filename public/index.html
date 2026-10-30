@@ -4,16 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f7f4">
-  <title>Cuenta Clara | Contabilidad</title>
+  <title>Kontara | Contabilidad</title>
   <link rel="stylesheet" href="/estilos.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <a class="brand" href="/" aria-label="Cuenta Clara, inicio">
-        <span class="brand-mark" aria-hidden="true">CC</span>
-        <span><strong>cuenta clara</strong><small>contabilidad sencilla</small></span>
+      <a class="brand" href="/" aria-label="Kontara, inicio">
+        <span><strong>Kontara</strong><small>contabilidad sencilla</small></span>
       </a>
       <div class="topbar-user" id="topbar-user" hidden>
         <span class="user-name" id="user-name"></span>
@@ -33,7 +32,7 @@
           <p class="eyebrow">Bienvenido</p>
           <h2 id="login-title">Inicia sesión</h2>
           <p class="muted">Ingresa con tu correo y contraseña.</p>
-          <form id="login-form">
+          <form id="login-form" method="post">
             <label for="login-email">Correo electrónico</label>
             <input id="login-email" name="email" type="email" autocomplete="username" required maxlength="254" placeholder="nombre@empresa.com">
             <label for="login-password">Contraseña</label>
@@ -43,7 +42,7 @@
           <p class="form-message" id="login-message" role="status" aria-live="polite"></p>
           <details class="demo-details">
             <summary>¿Es tu primera vez? Crear acceso de prueba</summary>
-            <form id="signup-form" class="signup-form">
+            <form id="signup-form" method="post" class="signup-form">
               <label for="signup-name">Tu nombre</label>
               <input id="signup-name" name="name" autocomplete="name" required maxlength="160">
               <label for="signup-company">Nombre de la empresa</label>
@@ -108,7 +107,7 @@
         </div>
       </section>
     </main>
-    <footer class="site-footer"><span>Cuenta Clara</span><span>Gestión contable para tu empresa</span></footer>
+    <footer class="site-footer"><span>Kontara</span><span>Gestión contable para tu empresa</span></footer>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
