@@ -1,4 +1,23 @@
 services:
+  api:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:-conta_session}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-12}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-contabilidad}
+      DB_USER: ${DB_USER:-contabilidad_app}
+      DB_PASSWORD: ${DB_PASSWORD:-change-me-locally}
+      TEST_DB_NAME: ${TEST_DB_NAME:-contabilidad_test}
+    ports:
+      - "${API_PORT:-3000}:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
   mysql:
     image: mysql:8.4
     restart: unless-stopped
