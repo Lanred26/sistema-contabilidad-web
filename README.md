@@ -2,7 +2,7 @@
 
 Aplicación web para que pequeñas y medianas empresas administren su catálogo de cuentas, registren movimientos contables y consulten estados financieros desde un navegador.
 
-El proyecto comenzó la implementación del Sprint 2 con una API REST en Node.js y Express, persistencia MySQL, autenticación mediante sesiones y los primeros flujos de catálogo, pólizas y mayor.
+El proyecto comenzó la implementación del Sprint 2 con una interfaz web conectada a una API REST en Node.js y Express, persistencia MySQL, autenticación mediante sesiones y los primeros flujos de catálogo, pólizas y mayor.
 
 ## Alcance inicial
 
@@ -39,4 +39,6 @@ La API sigue el ejemplo de clase de Express con `mysql2/promise`: archivo de con
 1. Copia `.env.example` a `.env` y define una contraseña local.
 2. Ejecuta `docker compose up -d` para iniciar MySQL 8.4.
 3. Ejecuta `npm ci` y `npm run db:migrate`.
-4. Para el desarrollo local, inicia la API con `npm run dev`.
+4. Para iniciar MySQL y la aplicación web con Docker, ejecuta `docker compose up -d --build`.
+5. Abre `http://localhost:3000` para usar la interfaz. En desarrollo, selecciona “Crear acceso de prueba” para registrar tu empresa y comenzar.
+6. También puedes iniciar la API y el frontend fuera de Docker con `npm ci` y `npm run dev`; configura antes las variables de conexión a MySQL en `.env`.
