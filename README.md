@@ -1,4 +1,4 @@
-# Sistema de Contabilidad Web
+# Kontara — Sistema de Contabilidad Web
 
 Aplicación web para que pequeñas y medianas empresas administren su catálogo de cuentas, registren movimientos contables y consulten estados financieros desde un navegador.
 

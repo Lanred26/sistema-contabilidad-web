@@ -5,6 +5,9 @@ const $ = (selector) => document.querySelector(selector);
 const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value || 0));
 const localDate = () => { const now = new Date(); return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
 
+// No conservar datos sensibles en la barra de direcciones.
+if (window.location.search) window.history.replaceState(null, document.title, window.location.pathname + window.location.hash);
+
 async function request(path, options = {}) {
   const response = await fetch(`${API}${path}`, { credentials: 'same-origin', ...options, headers: { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers } });
   const raw = await response.text();
@@ -160,14 +163,16 @@ function populateLedgerAccounts() {
 }
 
 $('#login-form').addEventListener('submit', async (event) => {
-  event.preventDefault(); showMessage($('#login-message'));
+  event.preventDefault();
+  showMessage($('#login-message'));
   const form = new FormData(event.currentTarget);
   try { const result = await request('/auth/sessions', { method: 'POST', body: JSON.stringify({ email: form.get('email'), password: form.get('password') }) }); enterWorkspace(result.user); }
   catch (error) { showMessage($('#login-message'), error.message); }
 });
 
 $('#signup-form').addEventListener('submit', async (event) => {
-  event.preventDefault(); showMessage($('#signup-message'));
+  event.preventDefault();
+  showMessage($('#signup-message'));
   const form = new FormData(event.currentTarget); const credentials = { email: form.get('email'), password: form.get('password') };
   try {
     await request('/auth/development-users', { method: 'POST', body: JSON.stringify({ ...credentials, name: form.get('name'), companyName: form.get('companyName') }) });
@@ -188,7 +193,8 @@ $('#new-account-button').addEventListener('click', () => { $('#account-form').hi
 function closeAccountForm() { $('#account-form').hidden = true; $('#account-form').reset(); showMessage($('#account-message')); }
 $('#close-account-form').addEventListener('click', closeAccountForm); $('#cancel-account-form').addEventListener('click', closeAccountForm);
 $('#account-form').addEventListener('submit', async (event) => {
-  event.preventDefault(); showMessage($('#account-message'));
+  event.preventDefault();
+  showMessage($('#account-message'));
   try {
     await request(`/companies/${state.companyId}/accounts`, { method: 'POST', body: JSON.stringify({ code: $('#account-code').value.trim(), name: $('#account-name').value.trim(), type: $('#account-type').value, subtype: $('#account-subtype').value.trim() || null }) });
     closeAccountForm(); await loadAccounts(); toast('Cuenta agregada al catálogo');
@@ -197,7 +203,9 @@ $('#account-form').addEventListener('submit', async (event) => {
 
 $('#add-line-button').addEventListener('click', addJournalLine);
 $('#journal-form').addEventListener('submit', async (event) => {
-  event.preventDefault(); showMessage($('#journal-message'));
+  event.preventDefault();
+  const form = event.currentTarget;
+  showMessage($('#journal-message'));
   if (!updateTotals()) return;
   const lines = [...$('#journal-lines').querySelectorAll('tr')].map((row) => {
     const debit = row.querySelector('[data-side="debit"]').value; const credit = row.querySelector('[data-side="credit"]').value;
@@ -205,12 +213,13 @@ $('#journal-form').addEventListener('submit', async (event) => {
   });
   try {
     await request(`/companies/${state.companyId}/journal-entries`, { method: 'POST', body: JSON.stringify({ date: $('#journal-date').value, description: $('#journal-description').value.trim(), lines }) });
-    event.currentTarget.reset(); $('#journal-date').value = localDate(); renderJournalLines(); toast('Póliza guardada correctamente'); showPage('overview');
+    form.reset(); $('#journal-date').value = localDate(); renderJournalLines(); toast('Póliza guardada correctamente'); showPage('overview');
   } catch (error) { showMessage($('#journal-message'), error.message); }
 });
 
 $('#ledger-form').addEventListener('submit', async (event) => {
-  event.preventDefault(); showMessage($('#global-message')); $('#ledger-result').hidden = true;
+  event.preventDefault();
+  showMessage($('#global-message')); $('#ledger-result').hidden = true;
   const accountId = $('#ledger-account').value; const from = $('#ledger-from').value; const to = $('#ledger-to').value;
   if (from > to) { showMessage($('#global-message'), 'La fecha inicial debe ser anterior o igual a la fecha final.'); return; }
   try {
