@@ -33,8 +33,6 @@ La API sigue el ejemplo de clase de Express con `mysql2/promise`: archivo de con
 6. [Plan de seguridad](docs/sprint-1/06-seguridad.md)
 7. [Plan, responsables y evidencias](docs/sprint-1/07-plan-y-evidencias.md)
 
-- [Guía del Sprint 2](docs/sprint-2/inicio.md)
-- [Trabajo en equipo y GitHub](docs/sprint-2/equipo.md)
 
 ## Inicio rápido
 
@@ -42,6 +40,3 @@ La API sigue el ejemplo de clase de Express con `mysql2/promise`: archivo de con
 2. Ejecuta `docker compose up -d` para iniciar MySQL 8.4.
 3. Ejecuta `npm ci` y `npm run db:migrate`.
 4. Para el desarrollo local, inicia la API con `npm run dev`.
-5. Consulta [docs/sprint-2/inicio.md](docs/sprint-2/inicio.md) para crear el primer usuario, usar los endpoints y ejecutar pruebas de integración.
-
-La rama `develop` contiene el trabajo integrado del Sprint 2. La guía de equipo explica cómo publicar ramas y solicitar la revisión del profesor.
