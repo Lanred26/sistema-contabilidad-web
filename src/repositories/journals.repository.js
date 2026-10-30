@@ -11,7 +11,7 @@ async function create({ id, companyId, userId, date, description, lines }) {
     }
     await connection.execute('INSERT INTO journal_entries (id, company_id, user_id, entry_date, description) VALUES (?, ?, ?, ?, ?)', [id, companyId, userId, date, description]);
     for (const line of lines) {
-      await connection.execute('INSERT INTO journal_lines (id, entry_id, company_id, account_id, debit, credit, description) VALUES (UUID(), ?, ?, ?, ?, ?, ?)', [id, companyId, line.accountId, line.debit, line.credit, line.description || null]);
+      await connection.execute('INSERT INTO journal_lines (id, entry_id, company_id, account_id, debit, credit, description) VALUES (UUID(), ?, ?, ?, ?, ?, ?)', [id, companyId, line.accountId, line.debit ?? '0.00', line.credit ?? '0.00', line.description || null]);
     }
     await connection.commit();
     return { id, date, description, lines };
