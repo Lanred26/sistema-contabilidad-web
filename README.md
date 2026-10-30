@@ -21,6 +21,8 @@ El proyecto comenzó la implementación del Sprint 2 con una API REST en Node.js
 - Base de datos: MySQL. El equipo decidió utilizarlo porque ya está disponible en su entorno de trabajo y cuenta con experiencia previa en varios proyectos.
 - Bibliotecas previstas: Chart.js para gráficas y jsPDF para exportación.
 
+La API sigue el ejemplo de clase de Express con `mysql2/promise`: archivo de configuración separado, rutas agrupadas, controladores y validaciones de solicitud. Se conserva JavaScript ES6 porque ésa fue la decisión registrada para este proyecto en el Sprint 1.
+
 ## Documentación
 
 1. [Requisitos y alcance](docs/sprint-1/01-requisitos.md)
@@ -31,15 +33,10 @@ El proyecto comenzó la implementación del Sprint 2 con una API REST en Node.js
 6. [Plan de seguridad](docs/sprint-1/06-seguridad.md)
 7. [Plan, responsables y evidencias](docs/sprint-1/07-plan-y-evidencias.md)
 
-- [Entrega del Sprint 2](docs/sprint-2/README.md)
-- [Cómo colaborar con GitHub](docs/sprint-2/colaboracion-github.md)
 
 ## Inicio rápido
 
 1. Copia `.env.example` a `.env` y define una contraseña local.
 2. Ejecuta `docker compose up -d` para iniciar MySQL 8.4.
-3. Ejecuta `npm install` y `npm run db:migrate`.
+3. Ejecuta `npm ci` y `npm run db:migrate`.
 4. Para el desarrollo local, inicia la API con `npm run dev`.
-5. Consulta [docs/sprint-2/README.md](docs/sprint-2/README.md) para crear el primer usuario, usar los endpoints y ejecutar pruebas de integración.
-
-La integración remota con GitHub y los responsables de dos integrantes quedan pendientes de confirmar con el equipo.

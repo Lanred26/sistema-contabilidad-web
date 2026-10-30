@@ -1,0 +1,11 @@
+const express = require('express');
+const controller = require('../controllers/auth.controller');
+const authenticate = require('../middlewares/authenticate');
+const validateRequest = require('../middlewares/validar-solicitud');
+const limitLogin = require('../middlewares/limitar-intentos');
+const { body } = require('express-validator');
+const router = express.Router();
+router.post('/sessions', limitLogin, body('email').isEmail().normalizeEmail(), body('password').isString().isLength({ min: 1, max: 128 }), body().custom((value) => Object.keys(value || {}).every((key) => ['email', 'password'].includes(key))), validateRequest, controller.createSession);
+router.delete('/sessions/current', authenticate, controller.deleteSession);
+router.post('/development-users', body('email').isEmail().normalizeEmail(), body('password').isString().isLength({ min: 12, max: 128 }), body('name').isString().trim().isLength({ min: 1, max: 160 }), body('companyName').isString().trim().isLength({ min: 1, max: 160 }), body('role').optional().isIn(['ADMIN', 'ACCOUNTANT', 'VIEWER']), body().custom((value) => Object.keys(value || {}).every((key) => ['email', 'password', 'name', 'companyName', 'role'].includes(key))), validateRequest, controller.createDevelopmentUser);
+module.exports = router;

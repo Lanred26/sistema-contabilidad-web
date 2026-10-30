@@ -1,0 +1,17 @@
+const express = require('express');
+const accounts = require('../controllers/accounts.controller');
+const journals = require('../controllers/journals.controller');
+const authenticate = require('../middlewares/authenticate');
+const companyAccess = require('../middlewares/company-access');
+const authorize = require('../middlewares/authorize');
+const { AppError } = require('../utils/errors');
+const validateRequest = require('../middlewares/validar-solicitud');
+const { validateCompany, validateAccount, validateAccountUpdate, validateEntry, validateLedgerQuery } = require('../validaciones');
+const router = express.Router({ mergeParams: true });
+router.use(validateCompany, validateRequest, authenticate, (req, _res, next) => { if (!req.params.companyId) return next(new AppError(404, 'COMPANY_NOT_FOUND', 'No se encontró la empresa.')); next(); }, companyAccess);
+router.get('/accounts', accounts.list);
+router.post('/accounts', authorize('ADMIN', 'ACCOUNTANT'), validateAccount, validateRequest, accounts.create);
+router.patch('/accounts/:accountId', authorize('ADMIN', 'ACCOUNTANT'), validateAccountUpdate, validateRequest, accounts.update);
+router.post('/journal-entries', authorize('ADMIN', 'ACCOUNTANT'), validateEntry, validateRequest, journals.create);
+router.get('/accounts/:accountId/ledger', validateLedgerQuery, validateRequest, journals.ledger);
+module.exports = router;
