@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>Cuenta Clara | Contabilidad</title>
+  <link rel="stylesheet" href="/estilos.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Cuenta Clara, inicio">
+        <span class="brand-mark" aria-hidden="true">CC</span>
+        <span><strong>cuenta clara</strong><small>contabilidad sencilla</small></span>
+      </a>
+      <div class="topbar-user" id="topbar-user" hidden>
+        <span class="user-name" id="user-name"></span>
+        <button class="button button-quiet button-small" id="logout-button" type="button">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="login-layout" id="login-view" aria-labelledby="login-title">
+        <div class="login-intro">
+          <p class="eyebrow">Tu negocio, en orden</p>
+          <h1>Una vista clara de tus cuentas.</h1>
+          <p>Registra operaciones, mantén tus pólizas balanceadas y consulta los movimientos de cada cuenta.</p>
+          <div class="login-note"><span class="note-icon" aria-hidden="true">✓</span><span>Tu información se consulta directamente desde el sistema.</span></div>
+        </div>
+        <div class="panel login-card">
+          <p class="eyebrow">Bienvenido</p>
+          <h2 id="login-title">Inicia sesión</h2>
+          <p class="muted">Ingresa con tu correo y contraseña.</p>
+          <form id="login-form">
+            <label for="login-email">Correo electrónico</label>
+            <input id="login-email" name="email" type="email" autocomplete="username" required maxlength="254" placeholder="nombre@empresa.com">
+            <label for="login-password">Contraseña</label>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" required maxlength="128" placeholder="Tu contraseña">
+            <button class="button button-primary button-wide" type="submit">Entrar <span aria-hidden="true">→</span></button>
+          </form>
+          <p class="form-message" id="login-message" role="status" aria-live="polite"></p>
+          <details class="demo-details">
+            <summary>¿Es tu primera vez? Crear acceso de prueba</summary>
+            <form id="signup-form" class="signup-form">
+              <label for="signup-name">Tu nombre</label>
+              <input id="signup-name" name="name" autocomplete="name" required maxlength="160">
+              <label for="signup-company">Nombre de la empresa</label>
+              <input id="signup-company" name="companyName" required maxlength="160">
+              <label for="signup-email">Correo electrónico</label>
+              <input id="signup-email" name="email" type="email" autocomplete="email" required maxlength="254">
+              <label for="signup-password">Contraseña (mínimo 12 caracteres)</label>
+              <input id="signup-password" name="password" type="password" autocomplete="new-password" required minlength="12" maxlength="128">
+              <button class="button button-secondary button-wide" type="submit">Crear acceso de prueba</button>
+              <p class="form-message" id="signup-message" role="status" aria-live="polite"></p>
+            </form>
+          </details>
+        </div>
+      </section>
+
+      <section class="workspace" id="workspace-view" hidden>
+        <aside class="sidebar" aria-label="Navegación principal">
+          <p class="eyebrow">Espacio de trabajo</p>
+          <div class="company-switcher">
+            <span class="company-icon" aria-hidden="true">⌂</span>
+            <span class="company-info"><strong id="company-label">Empresa</strong><small id="role-label"></small></span>
+            <select id="company-select" aria-label="Seleccionar empresa" hidden></select>
+          </div>
+          <nav class="nav-list">
+            <button class="nav-item active" data-page="overview" type="button"><span aria-hidden="true">▦</span> Resumen</button>
+            <button class="nav-item" data-page="accounts" type="button"><span aria-hidden="true">▤</span> Cuentas</button>
+            <button class="nav-item" data-page="journal" type="button"><span aria-hidden="true">＋</span> Nueva póliza</button>
+            <button class="nav-item" data-page="ledger" type="button"><span aria-hidden="true">≋</span> Consultar mayor</button>
+          </nav>
+          <div class="sidebar-footer"><span class="status-dot"></span> Sistema conectado</div>
+        </aside>
+
+        <div class="content-area">
+          <div class="page-heading">
+            <div><p class="eyebrow" id="page-eyebrow">Vista general</p><h1 id="page-title">Resumen</h1><p class="muted" id="page-description">Un vistazo a la actividad contable de tu empresa.</p></div>
+            <span class="date-chip" id="today-chip"></span>
+          </div>
+          <p class="form-message global-message" id="global-message" role="status" aria-live="polite"></p>
+
+          <section class="page-panel" id="page-overview">
+            <div class="stats-grid">
+              <article class="stat-card"><span class="stat-icon green" aria-hidden="true">▤</span><span class="stat-label">Cuentas registradas</span><strong id="stat-accounts">—</strong><small>En el catálogo de la empresa</small></article>
+              <article class="stat-card"><span class="stat-icon amber" aria-hidden="true">＋</span><span class="stat-label">Pólizas</span><strong>Asientos contables</strong><small>Registra cada operación con debe y haber</small></article>
+              <article class="stat-card"><span class="stat-icon blue" aria-hidden="true">≋</span><span class="stat-label">Mayor</span><strong>Movimientos por cuenta</strong><small>Consulta saldos en un periodo</small></article>
+            </div>
+            <div class="panel welcome-panel"><div><p class="eyebrow">Sprint 2</p><h2>Tu contabilidad comienza aquí.</h2><p class="muted">Agrega las cuentas de tu catálogo y registra tu primera póliza. El sistema valida que cargos y abonos estén balanceados.</p><button class="button button-primary" data-go="accounts" type="button">Abrir catálogo <span aria-hidden="true">→</span></button></div><div class="welcome-art" aria-hidden="true"><span>₊</span><span>≋</span><span>✓</span></div></div>
+            <div class="panel panel-padding"><div class="section-heading"><div><p class="eyebrow">Catálogo</p><h2>Cuentas recientes</h2></div><button class="text-button" data-go="accounts" type="button">Ver todas →</button></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Tipo</th><th>Estado</th></tr></thead><tbody id="overview-accounts"></tbody></table></div><p class="empty-state" id="overview-empty" hidden>Aún no hay cuentas. Agrega la primera desde el catálogo.</p></div>
+          </section>
+
+          <section class="page-panel" id="page-accounts" hidden>
+            <div class="panel panel-padding"><div class="section-heading"><div><p class="eyebrow">Catálogo contable</p><h2>Tus cuentas</h2><p class="muted">Organiza activos, pasivos, capital, ingresos y gastos.</p></div><button class="button button-primary" id="new-account-button" type="button">＋ Nueva cuenta</button></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Tipo</th><th>Subtipo</th><th>Estado</th><th></th></tr></thead><tbody id="accounts-table"></tbody></table></div><p class="empty-state" id="accounts-empty" hidden>No hay cuentas todavía. Usa “Nueva cuenta” para comenzar.</p></div>
+            <form class="panel form-panel" id="account-form" hidden><div class="section-heading"><div><p class="eyebrow">Nueva cuenta</p><h2>Agregar al catálogo</h2></div><button class="icon-button" id="close-account-form" type="button" aria-label="Cerrar formulario">×</button></div><div class="form-grid"><div><label for="account-code">Código</label><input id="account-code" required maxlength="32" pattern="[A-Za-z0-9.\-]+" placeholder="1100"></div><div><label for="account-name">Nombre</label><input id="account-name" required maxlength="160" placeholder="Bancos"></div><div><label for="account-type">Tipo de cuenta</label><select id="account-type" required><option value="ASSET">Activo</option><option value="LIABILITY">Pasivo</option><option value="EQUITY">Capital</option><option value="REVENUE">Ingreso</option><option value="EXPENSE">Gasto</option></select></div><div><label for="account-subtype">Subtipo <span class="optional">(opcional)</span></label><input id="account-subtype" maxlength="80" placeholder="Circulante"></div></div><p class="form-message" id="account-message" role="status"></p><div class="form-actions"><button class="button button-secondary" id="cancel-account-form" type="button">Cancelar</button><button class="button button-primary" type="submit">Guardar cuenta</button></div></form>
+          </section>
+
+          <section class="page-panel" id="page-journal" hidden>
+            <form class="panel form-panel" id="journal-form"><div class="section-heading"><div><p class="eyebrow">Registro contable</p><h2>Nueva póliza</h2><p class="muted">Cada póliza debe tener cargos y abonos por el mismo importe.</p></div><span class="balance-badge" id="balance-badge">Sin balancear</span></div><div class="form-grid journal-meta"><div><label for="journal-date">Fecha</label><input id="journal-date" type="date" required></div><div class="wide-field"><label for="journal-description">Concepto</label><input id="journal-description" maxlength="240" required placeholder="Descripción de la operación"></div></div><div class="table-wrap journal-table-wrap"><table><thead><tr><th>Cuenta</th><th>Descripción <span class="optional">(opcional)</span></th><th>Debe</th><th>Haber</th><th></th></tr></thead><tbody id="journal-lines"></tbody></table></div><button class="text-button add-line" id="add-line-button" type="button">＋ Agregar otra línea</button><div class="totals-row"><span>Totales</span><strong>Debe <span id="total-debit">$0.00</span></strong><strong>Haber <span id="total-credit">$0.00</span></strong><strong class="difference">Diferencia <span id="total-difference">$0.00</span></strong></div><p class="form-message" id="journal-message" role="status"></p><div class="form-actions"><button class="button button-primary" id="submit-journal" type="submit" disabled>Guardar póliza</button></div></form>
+          </section>
+
+          <section class="page-panel" id="page-ledger" hidden>
+            <form class="panel panel-padding ledger-filter" id="ledger-form"><div><p class="eyebrow">Consulta contable</p><h2>Mayor auxiliar</h2><p class="muted">Selecciona una cuenta y un periodo para ver sus movimientos.</p></div><div class="ledger-fields"><div><label for="ledger-account">Cuenta</label><select id="ledger-account" required></select></div><div><label for="ledger-from">Desde</label><input id="ledger-from" type="date" required></div><div><label for="ledger-to">Hasta</label><input id="ledger-to" type="date" required></div><button class="button button-primary" type="submit">Consultar</button></div></form><div class="panel panel-padding ledger-result" id="ledger-result" hidden><div class="section-heading"><div><p class="eyebrow" id="ledger-period"></p><h2 id="ledger-title">Movimientos</h2></div></div><div class="stats-grid ledger-balances"><article class="balance-card"><small>Saldo inicial</small><strong id="opening-balance"></strong></article><article class="balance-card"><small>Saldo final</small><strong id="closing-balance"></strong></article></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Debe</th><th>Haber</th><th>Saldo</th></tr></thead><tbody id="ledger-table"></tbody></table></div><p class="empty-state" id="ledger-empty" hidden>Sin movimientos en este periodo.</p></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><span>Cuenta Clara</span><span>Gestión contable para tu empresa</span></footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
