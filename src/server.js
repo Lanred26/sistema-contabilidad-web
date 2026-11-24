@@ -1,4 +1,4 @@
-require('dotenv').config();
+const config = require('./config/entorno');
 const app = require('./app');
 const db = require('./config/database');
 
@@ -24,9 +24,9 @@ class Server {
 }
 
 if (require.main === module) {
-  const server = new Server({ port: Number(process.env.PORT || 3000), app });
+  const server = new Server({ port: config.port, app });
   server.start().catch((error) => {
-    console.error(`No se pudo iniciar el servidor: ${error.message}`);
+    console.error('No se pudo iniciar el servidor. Revisa la conexión y configuración local.');
     process.exitCode = 1;
   });
   process.on('SIGINT', () => server.stop().then(() => process.exit(0)));

@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('./config/entorno');
 const express = require('express');
 const requestId = require('./middlewares/request-id');
 const cookies = require('./middlewares/cookies');

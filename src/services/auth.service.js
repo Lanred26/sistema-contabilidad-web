@@ -1,3 +1,4 @@
+const config = require('../config/entorno');
 const crypto = require('node:crypto');
 const repo = require('../repositories/auth.repository');
 const { AppError } = require('../utils/errors');
@@ -10,7 +11,7 @@ async function login(email, password) {
   const valid = Boolean(user && user.active && passwordValid);
   if (!valid) throw new AppError(401, 'INVALID_CREDENTIALS', 'Correo o contraseña no válidos.');
   const token = crypto.randomBytes(32).toString('base64url');
-  const ttl = Number(process.env.SESSION_TTL_HOURS || 12);
+  const ttl = config.sessionTtlHours;
   const expiresAt = new Date(Date.now() + ttl * 3600000);
   await repo.createSession({ id: crypto.randomUUID(), userId: user.id, tokenHash: digest(token), expiresAt });
   return { token, expiresAt, user: { id: user.id, email: user.email, name: user.full_name, companies: await repo.memberships(user.id) } };
