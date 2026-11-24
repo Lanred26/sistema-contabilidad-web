@@ -12,12 +12,17 @@
     "test:watch": "vitest",
     "test:integration": "vitest run tests/integration"
   },
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.5",
     "express-validator": "^7.3.2",
-    "mysql2": "^3.24.4"
+    "mysql2": "^3.24.4",
+    "sequelize": "^6.37.8"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^5.0.5",

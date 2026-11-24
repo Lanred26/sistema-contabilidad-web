@@ -10,7 +10,7 @@ class Server {
   }
 
   async start() {
-    await db.query('SELECT 1');
+    await db.authenticate();
     this.httpServer = this.app.listen(this.port, () => {
       console.log(`Servidor disponible en http://localhost:${this.port}`);
     });
@@ -19,7 +19,7 @@ class Server {
 
   async stop() {
     if (this.httpServer) await new Promise((resolve, reject) => this.httpServer.close((error) => error ? reject(error) : resolve()));
-    await db.end();
+    await db.close();
   }
 }
 

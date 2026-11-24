@@ -4,7 +4,7 @@ const { AppError } = require('../utils/errors');
 async function create(companyId, input) {
   try { return await repo.create({ id: crypto.randomUUID(), companyId, ...input }); }
   catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') throw new AppError(409, 'ACCOUNT_CODE_EXISTS', 'Ya existe una cuenta con ese código en la empresa.');
+    if (error.name === 'SequelizeUniqueConstraintError') throw new AppError(409, 'ACCOUNT_CODE_EXISTS', 'Ya existe una cuenta con ese código en la empresa.');
     throw error;
   }
 }

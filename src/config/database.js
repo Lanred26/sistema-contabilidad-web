@@ -1,8 +1,8 @@
 require('./cargar-entorno');
-const mysql = require('mysql2/promise');
-const { databaseConfig } = require('./variables');
-module.exports = mysql.createPool({
-  ...databaseConfig(process.env),
-  waitForConnections: true, connectionLimit: 10, decimalNumbers: false,
-  dateStrings: true, charset: 'utf8mb4'
+const { Sequelize } = require('sequelize');
+const config = require('./variables').databaseConfig(process.env);
+module.exports = new Sequelize(config.database, config.user, config.password, {
+  host: config.host, port: config.port, dialect: 'mysql', logging: false,
+  timezone: '+00:00', dialectOptions: { decimalNumbers: false },
+  pool: { max: 10, min: 0, idle: 10000 }
 });

@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
-const db = require('../../src/config/database');
+const db = require('../helpers/database');
 const app = require('../../src/app');
 const { hashPassword } = require('../../src/utils/contrasenas');
 

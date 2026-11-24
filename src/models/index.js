@@ -1,0 +1,28 @@
+const { DataTypes: D } = require('sequelize');
+const sequelize = require('../config/database');
+const id = () => ({ type: D.CHAR(36), primaryKey: true, allowNull: false });
+const ref = () => ({ type: D.CHAR(36), allowNull: false });
+const text = (length) => ({ type: D.STRING(length), allowNull: false });
+const active = () => ({ type: D.BOOLEAN, allowNull: false, defaultValue: true });
+const created = () => ({ type: D.DATE, allowNull: false, defaultValue: D.NOW });
+const define = (name, fields) => sequelize.define(name, fields, { tableName: name, timestamps: false });
+const Company = define('companies', { id: id(), name: text(160), currency: { ...text(3), defaultValue: 'MXN' }, created_at: created() });
+const User = define('users', { id: id(), email: { ...text(254), unique: true }, password_hash: text(255), full_name: text(160), active: active(), created_at: created() });
+const Membership = define('memberships', { id: id(), user_id: ref(), company_id: ref(), role: { type: D.ENUM('ADMIN','ACCOUNTANT','VIEWER'), allowNull: false }, active: active() });
+const Account = define('accounts', { id: id(), company_id: ref(), code: text(32), name: text(160), type: { type: D.ENUM('ASSET','LIABILITY','EQUITY','REVENUE','EXPENSE'), allowNull: false }, subtype: D.STRING(80), active: active(), created_at: created(), updated_at: created() });
+const Entry = define('journal_entries', { id: id(), company_id: ref(), user_id: ref(), entry_date: { type: D.DATEONLY, allowNull: false }, description: text(240), status: { type: D.ENUM('POSTED'), defaultValue: 'POSTED', allowNull: false }, created_at: created() });
+const Line = define('journal_lines', { id: id(), entry_id: ref(), company_id: ref(), account_id: ref(), debit: { type: D.DECIMAL(15,2), allowNull: false, defaultValue: '0.00' }, credit: { type: D.DECIMAL(15,2), allowNull: false, defaultValue: '0.00' }, description: D.STRING(240) });
+const Session = define('sessions', { id: id(), user_id: ref(), token_hash: { ...text(64), unique: true }, expires_at: { type: D.DATE, allowNull: false }, revoked_at: D.DATE, created_at: created() });
+const Audit = define('audit_events', { id: id(), user_id: ref(), company_id: ref(), action: text(80), resource_type: text(80), resource_id: D.CHAR(36), request_id: ref(), created_at: created() });
+// Las restricciones existentes se conservan en schema.sql; no se ejecuta sync.
+Membership.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+Membership.belongsTo(Company, { foreignKey: 'company_id', as: 'company' });
+Session.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+Line.belongsTo(Entry, { foreignKey: 'entry_id', as: 'entry' });
+Line.belongsTo(Account, { foreignKey: 'account_id', as: 'account' });
+Account.belongsTo(Company, { foreignKey: 'company_id', as: 'company' });
+Entry.belongsTo(Company, { foreignKey: 'company_id', as: 'company' });
+Entry.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+Audit.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+Audit.belongsTo(Company, { foreignKey: 'company_id', as: 'company' });
+module.exports = { Company, User, Membership, Account, Entry, Line, Session, Audit };

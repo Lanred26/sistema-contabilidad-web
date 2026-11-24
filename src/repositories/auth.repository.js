@@ -1,23 +1,32 @@
-const db = require('../config/database');
-
+const { Op } = require('sequelize');
+const sequelize = require('../config/database');
+const { User, Company, Membership, Session } = require('../models');
 async function findUserByEmail(email) {
-  const [rows] = await db.execute('SELECT id, email, password_hash, full_name, active FROM users WHERE email = ?', [email]);
-  return rows[0] || null;
+  return User.findOne({ where: { email }, attributes: ['id','email','password_hash','full_name','active'], raw: true });
 }
 async function createSession({ id, userId, tokenHash, expiresAt }) {
-  await db.execute('INSERT INTO sessions (id, user_id, token_hash, expires_at) VALUES (?, ?, ?, ?)', [id, userId, tokenHash, expiresAt]);
+  await Session.create({ id, user_id: userId, token_hash: tokenHash, expires_at: expiresAt });
 }
 async function findSession(tokenHash) {
-  const [rows] = await db.execute(`SELECT s.id AS session_id, u.id, u.email, u.full_name
-    FROM sessions s JOIN users u ON u.id = s.user_id
-    WHERE s.token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > UTC_TIMESTAMP() AND u.active = TRUE`, [tokenHash]);
-  return rows[0] || null;
+  const session = await Session.findOne({ where: { token_hash: tokenHash, revoked_at: null, expires_at: { [Op.gt]: new Date() } }, include: [{ model: User, as: 'user', required: true, where: { active: true }, attributes: ['id','email','full_name'] }] });
+  if (!session) return null;
+  return { session_id: session.id, id: session.user.id, email: session.user.email, full_name: session.user.full_name };
 }
 async function revokeSession(tokenHash) {
-  await db.execute('UPDATE sessions SET revoked_at = UTC_TIMESTAMP() WHERE token_hash = ? AND revoked_at IS NULL', [tokenHash]);
+  await Session.update({ revoked_at: new Date() }, { where: { token_hash: tokenHash, revoked_at: null } });
 }
 async function memberships(userId) {
-  const [rows] = await db.execute('SELECT m.company_id, m.role FROM memberships m JOIN companies c ON c.id = m.company_id WHERE m.user_id = ? AND m.active = TRUE', [userId]);
-  return rows;
+  return Membership.findAll({ where: { user_id: userId, active: true }, attributes: ['company_id','role'], include: [{ model: Company, as: 'company', required: true, attributes: [] }], raw: true });
 }
-module.exports = { findUserByEmail, createSession, findSession, revokeSession, memberships };
+async function findMembership(userId, companyId) {
+  return Membership.findOne({ where: { user_id: userId, company_id: companyId, active: true }, attributes: ['role'], raw: true });
+}
+async function createDevelopmentUser({ userId, companyId, membershipId, email, passwordHash, name, companyName, role }) {
+  await sequelize.transaction(async (transaction) => {
+    await User.create({ id: userId, email, password_hash: passwordHash, full_name: name }, { transaction });
+    await Company.create({ id: companyId, name: companyName }, { transaction });
+    await Membership.create({ id: membershipId, user_id: userId, company_id: companyId, role }, { transaction });
+  });
+  return { userId, companyId };
+}
+module.exports = { findUserByEmail, createSession, findSession, revokeSession, memberships, findMembership, createDevelopmentUser };

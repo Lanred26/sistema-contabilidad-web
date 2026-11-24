@@ -6,7 +6,7 @@ if (!database) {
   test.skip('Sprint 2 integration tests require TEST_DB_NAME', () => {});
 } else {
   process.env.DB_NAME = database;
-  const db = require('../../src/config/database');
+  const db = require('../helpers/database');
   const app = require('../../src/app');
   const { hashPassword } = require('../../src/utils/contrasenas');
   let userId; let companyId; let accountA; let accountB; let cookie;

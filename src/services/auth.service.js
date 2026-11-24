@@ -2,7 +2,7 @@ const config = require('../config/entorno');
 const crypto = require('node:crypto');
 const repo = require('../repositories/auth.repository');
 const { AppError } = require('../utils/errors');
-const { verifyPassword, DUMMY_HASH } = require('../utils/contrasenas');
+const { hashPassword, verifyPassword, DUMMY_HASH } = require('../utils/contrasenas');
 
 const digest = (token) => crypto.createHash('sha256').update(token).digest('hex');
 async function login(email, password) {
@@ -22,4 +22,20 @@ async function authenticate(token) {
   return { id: session.id, email: session.email, name: session.full_name, sessionId: session.session_id };
 }
 async function logout(token) { await repo.revokeSession(digest(token)); }
-module.exports = { login, authenticate, logout };
+async function companyAccess(userId, companyId) {
+  const membership = await repo.findMembership(userId, companyId);
+  if (!membership) throw new AppError(404, 'COMPANY_NOT_FOUND', 'No se encontró la empresa.');
+  return { id: companyId, role: membership.role };
+}
+async function createDevelopmentUser(input) {
+  const userId = crypto.randomUUID(); const companyId = crypto.randomUUID();
+  try {
+    return await repo.createDevelopmentUser({ userId, companyId, membershipId: crypto.randomUUID(),
+      email: input.email.trim().toLowerCase(), passwordHash: await hashPassword(input.password),
+      name: input.name, companyName: input.companyName, role: input.role || 'ADMIN' });
+  } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') throw new AppError(409, 'EMAIL_EXISTS', 'Ya existe una cuenta con ese correo.');
+    throw error;
+  }
+}
+module.exports = { login, authenticate, logout, companyAccess, createDevelopmentUser };
