@@ -6,7 +6,7 @@ if (!database) {
   test.skip('Sprint 2 integration tests require TEST_DB_NAME', () => {});
 } else {
   process.env.DB_NAME = database;
-  const db = require('../../src/config/database');
+  const db = require('../helpers/database');
   const app = require('../../src/app');
   const { hashPassword } = require('../../src/utils/contrasenas');
   let userId; let companyId; let accountA; let accountB; let cookie;
@@ -96,5 +96,33 @@ if (!database) {
     assert.equal(ledger.body.data.movements.length, 1);
     assert.equal(ledger.body.data.movements[0].debit, '99.00');
     assert.equal((await send('GET', `/api/v1/companies/${companyId}/accounts/${crypto.randomUUID()}/ledger?from=2026-01-01&to=2026-12-31`, { session: currentCookie })).status, 404);
+  });
+
+  test('rechaza fechas con hora e importes numéricos sin guardar la póliza', async () => {
+    const [users] = await db.execute('SELECT email FROM users WHERE id = ?', [userId]);
+    const login = await send('POST', '/api/v1/auth/sessions', { body: { email: users[0].email, password: 'StrongTestPassword!7' } });
+    const currentCookie = login.headers.get('set-cookie').split(';')[0];
+    const path = `/api/v1/companies/${companyId}/journal-entries`;
+    const description = `Validación ${crypto.randomUUID()}`;
+    const valid = { date: '2026-11-24', description, lines: [{ accountId: accountA, debit: '100.00' }, { accountId: accountB, credit: '100.00' }] };
+    assert.equal((await send('POST', path, { session: currentCookie, body: { ...valid, date: '2026-11-24T12:00:00Z' } })).status, 422);
+    assert.equal((await send('POST', path, { session: currentCookie, body: { ...valid, lines: [{ accountId: accountA, debit: 100 }, valid.lines[1]] } })).status, 422);
+    const [rows] = await db.execute('SELECT id FROM journal_entries WHERE company_id = ? AND description = ?', [companyId, description]);
+    assert.equal(rows.length, 0);
+    assert.equal((await send('GET', `/api/v1/companies/${companyId}/accounts/${accountA}/ledger?from=2026-01-01T00:00:00Z&to=2026-12-31`, { session: currentCookie })).status, 422);
+  });
+
+  test('solo quienes tienen permiso contable pueden modificar cuentas y pólizas', async () => {
+    const viewerId = crypto.randomUUID();
+    const email = `viewer-${viewerId}@example.test`;
+    await db.execute('INSERT INTO users (id,email,password_hash,full_name) VALUES (?,?,?,?)', [viewerId, email, await hashPassword('StrongTestPassword!7'), 'Consulta']);
+    await db.execute('INSERT INTO memberships (id,user_id,company_id,role) VALUES (?,?,?,?)', [crypto.randomUUID(), viewerId, companyId, 'VIEWER']);
+    const login = await send('POST', '/api/v1/auth/sessions', { body: { email, password: 'StrongTestPassword!7' } });
+    const viewerCookie = login.headers.get('set-cookie').split(';')[0];
+    const base = `/api/v1/companies/${companyId}`;
+    assert.equal((await send('GET', `${base}/accounts`, { session: viewerCookie })).status, 200);
+    assert.equal((await send('POST', `${base}/accounts`, { session: viewerCookie, body: { code: 'NOPE', name: 'Sin permiso', type: 'ASSET' } })).status, 403);
+    assert.equal((await send('PATCH', `${base}/accounts/${accountA}`, { session: viewerCookie, body: { active: false } })).status, 403);
+    assert.equal((await send('POST', `${base}/journal-entries`, { session: viewerCookie, body: { date: '2026-11-24', description: 'Sin permiso', lines: [{ accountId: accountA, debit: '1.00' }, { accountId: accountB, credit: '1.00' }] } })).status, 403);
   });
 }

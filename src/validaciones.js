@@ -14,24 +14,24 @@ const validateAccountUpdate = [
   body('name').optional().isString().trim().isLength({ min: 1, max: 160 }),
   body('type').optional().isIn(['ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE']),
   body('subtype').optional({ nullable: true }).isString().trim().isLength({ max: 80 }),
-  body('active').optional().isBoolean(),
+  body('active').optional().custom((value) => typeof value === 'boolean').withMessage('El estado debe ser verdadero o falso.'),
   body().custom((value) => Object.keys(value || {}).length > 0 && Object.keys(value || {}).every((key) => ['name', 'type', 'subtype', 'active'].includes(key))).withMessage('Indica al menos un campo válido para cambiar.')
 ];
 const validateEntry = [
-  body('date').isISO8601({ strict: true, strictSeparator: true }),
+  body('date').isISO8601({ strict: true, strictSeparator: true }).matches(/^\d{4}-\d{2}-\d{2}$/),
   body('description').isString().trim().isLength({ min: 1, max: 240 }),
   body('lines').isArray({ min: 2, max: 100 }),
   body('lines.*.accountId').isUUID(),
-  body('lines.*.debit').optional().matches(/^\d{1,13}(\.\d{1,2})?$/),
-  body('lines.*.credit').optional().matches(/^\d{1,13}(\.\d{1,2})?$/),
+  body('lines.*.debit').optional().isString().matches(/^\d{1,13}(\.\d{1,2})?$/),
+  body('lines.*.credit').optional().isString().matches(/^\d{1,13}(\.\d{1,2})?$/),
   body('lines.*.description').optional().isString().trim().isLength({ max: 240 }),
   body().custom((value) => Object.keys(value || {}).every((key) => ['date', 'description', 'lines'].includes(key))).withMessage('La solicitud contiene campos no permitidos.'),
   body('lines.*').custom((line) => Object.keys(line || {}).every((key) => ['accountId', 'debit', 'credit', 'description'].includes(key))).withMessage('Una línea contiene campos no permitidos.')
 ];
 const validateLedgerQuery = [
   validateAccountId,
-  query('from').isISO8601({ strict: true, strictSeparator: true }),
-  query('to').isISO8601({ strict: true, strictSeparator: true }),
+  query('from').isISO8601({ strict: true, strictSeparator: true }).matches(/^\d{4}-\d{2}-\d{2}$/),
+  query('to').isISO8601({ strict: true, strictSeparator: true }).matches(/^\d{4}-\d{2}-\d{2}$/),
   query().custom((value) => Object.keys(value || {}).every((key) => ['from', 'to'].includes(key))).withMessage('La consulta contiene campos no permitidos.')
 ];
 

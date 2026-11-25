@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
-const db = require('../../src/config/database');
+const db = require('../helpers/database');
 const app = require('../../src/app');
 const { hashPassword } = require('../../src/utils/contrasenas');
 
@@ -58,4 +58,16 @@ test('rechaza un tipo de cuenta no permitido y no lo guarda', async () => {
   assert.equal(result.status, 422);
   const [rows] = await db.execute('SELECT id FROM accounts WHERE company_id = ? AND code = ?', [companyId, code]);
   assert.equal(rows.length, 0);
+});
+
+test('rechaza estados escritos como texto y campos adicionales sin cambiar la cuenta', async () => {
+  const code = `VAL${crypto.randomUUID().slice(0, 8)}`;
+  const path = `/api/v1/companies/${companyId}/accounts`;
+  const created = await send('POST', path, { session: cookie, body: { code, name: 'Caja', type: 'ASSET' } });
+  assert.equal(created.status, 201);
+  const id = created.body.data.id;
+  assert.equal((await send('PATCH', `${path}/${id}`, { session: cookie, body: { active: 'false' } })).status, 422);
+  assert.equal((await send('PATCH', `${path}/${id}`, { session: cookie, body: { active: false, company_id: crypto.randomUUID() } })).status, 422);
+  const [rows] = await db.execute('SELECT active FROM accounts WHERE id = ?', [id]);
+  assert.equal(rows[0].active, 1);
 });

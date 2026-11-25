@@ -1,5 +1,5 @@
 const service = require('../services/journals.service');
-const audit = require('../repositories/audit.repository');
+const audit = require('../services/audit.service');
 const asyncHandler = require('../utils/async-handler');
 const crypto = require('node:crypto');
 
