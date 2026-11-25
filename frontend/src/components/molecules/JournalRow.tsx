@@ -1,0 +1,7 @@
+import type { Account, JournalLine } from '../../types'
+import { accountTypes } from '../../types'
+type Props = { line: JournalLine; accounts: Account[]; onChange: (line: JournalLine) => void; onRemove: () => void; removable: boolean }
+export default function JournalRow({ line, accounts, onChange, onRemove, removable }: Props) {
+  const update = (side: 'debit' | 'credit', value: string) => onChange({ ...line, [side]: value, ...(value && Number(value) > 0 ? { [side === 'debit' ? 'credit' : 'debit']: '' } : {}) })
+  return <tr><td><select aria-label="Cuenta contable" required value={line.accountId} onChange={event => onChange({ ...line, accountId: event.target.value })}><option value="">Selecciona una cuenta</option>{accounts.filter(a => a.active).map(a => <option key={a.id} value={a.id}>{a.code} · {a.name} ({accountTypes[a.type]})</option>)}</select></td><td><input aria-label="Descripción de línea" placeholder="Detalle" maxLength={240} value={line.description} onChange={event => onChange({ ...line, description: event.target.value })}/></td>{(['debit', 'credit'] as const).map(side => <td key={side}><input className="amount-input" aria-label={side === 'debit' ? 'Debe' : 'Haber'} inputMode="decimal" placeholder="0.00" value={line[side]} onChange={event => update(side, event.target.value)} /></td>)}<td><button type="button" className="remove-line" aria-label="Quitar línea" disabled={!removable} onClick={onRemove}>×</button></td></tr>
+}

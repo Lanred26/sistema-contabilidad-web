@@ -15,6 +15,7 @@ logs/
 coverage/
 dist/
 build/
+*.tsbuildinfo
 
 # Datos locales y respaldos
 *.sqlite

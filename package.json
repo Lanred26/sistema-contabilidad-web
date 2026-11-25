@@ -1,0 +1,32 @@
+{
+  "name": "sistema-contabilidad-web",
+  "version": "0.2.0",
+  "private": true,
+  "description": "API inicial del Sistema de Contabilidad Web",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "build:frontend": "npm run build --prefix frontend",
+    "db:migrate": "node scripts/migrate.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run tests/integration"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.5",
+    "express-validator": "^7.3.2",
+    "mysql2": "^3.24.4",
+    "sequelize": "^6.37.8"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^5.0.5",
+    "vitest": "^5.0.5"
+  }
+}

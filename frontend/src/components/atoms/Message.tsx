@@ -1,0 +1,1 @@
+export default function Message({ text, success = false }: { text: string; success?: boolean }) { return <p className={`form-message${success ? ' success' : ''}`} role="status" aria-live="polite">{text}</p> }

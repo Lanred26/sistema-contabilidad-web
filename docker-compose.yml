@@ -1,0 +1,42 @@
+services:
+  api:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:?Falta NODE_ENV}
+      PORT: 3000
+      SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:?Falta SESSION_COOKIE_NAME}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:?Falta SESSION_TTL_HOURS}
+      ENABLE_DEV_SEED: ${ENABLE_DEV_SEED:?Falta ENABLE_DEV_SEED}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:?Falta DB_NAME}
+      DB_USER: ${DB_USER:?Falta DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD:?Falta DB_PASSWORD}
+      TEST_DB_NAME: ${TEST_DB_NAME:?Falta TEST_DB_NAME}
+    ports:
+      - "${API_PORT:?Falta API_PORT}:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Falta MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:?Falta DB_NAME}
+      MYSQL_USER: ${DB_USER:?Falta DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Falta DB_PASSWORD}
+    ports:
+      - "${DB_PORT:?Falta DB_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+      - ./db/test-database.sql:/docker-entrypoint-initdb.d/002-test-database.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+volumes:
+  mysql_data:
